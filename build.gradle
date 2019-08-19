@@ -1,0 +1,44 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets.test.java.srcDirs = ['src/test/java']
+sourceSets.main.java.srcDirs = ['src/main/java']
+sourceSets.main.resources.srcDirs = ['src/main/resources']
+
+/*
+sourceSets {
+    main {
+        resources {
+            srcDir 'src'
+            include '*.yml'
+        }
+    }
+}
+*/
+
+jar
+{
+    from
+	{
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+   		url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots"
+	}
+	maven {
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+}
+
+dependencies 
+{
+    implementation "org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT"
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    compile group: 'joda-time', name: 'joda-time', version: '2.3'
+    compile project(':jbutil')
+}

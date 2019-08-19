@@ -1,0 +1,6 @@
+l1-threshold: 20
+xp-increase: 1.5
+rewards: 
+  daily-login: 50
+  player-killed: 20
+  block-mined: 5

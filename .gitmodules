@@ -1,0 +1,3 @@
+[submodule "jbutil"]
+	path = jbutil
+	url = git@bitbucket.org:Jonas_Bartkowski/jbutil.git

@@ -1,0 +1,41 @@
+1 - simple loans 
+It's a loan plugin, player would type something like 
+/loan offer <user> <amount><time in days to repay><interest>
+Then ever 24hours they user gets a payment auto taken from account if they can't afford to pay then they get a late fee
+interest rate increases by 1% every late day.
+every day that a payment cannot be fully processed due to low funds:
++1% interest
+
+
+ChronoUnit
+
+what time? configurable?
+
+done:
+	late feeing
+	
+	deducting of interest
+		
+	make a task that checks every hour or so if it's already a new day compared to last deduction then deduct
+			
+	error messages
+
+	saving & loading in human readable format [missing]	+5$ DONE
+	
+	saving lastDeductionDate
+		not actually necessary, the deduction only works anyways if the Date is on a new day.
+		
+	testing with real Vault implementation
+		testing withdrawal: done
+		testing giving: done
+		
+	messages better
+	
+	everyting in plugin folder
+	
+left:
+
+	YML connection of data
+	backup
+	
+	
