@@ -4,3 +4,9 @@ rewards:
   daily-login: 50
   player-killed: 20
   block-mined: 5
+sql:
+  user: "root"
+  pw: "test"
+  timezone: "CET"
+  address: "localhost:3306"
+  database: "custom-levels"

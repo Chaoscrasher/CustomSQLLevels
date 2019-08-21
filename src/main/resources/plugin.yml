@@ -1,10 +1,10 @@
-name: simpleloans
+name: custom-levels
 version: 0.96
 description:
-author: chaoscrasher & muttley
-main: com.jb1services.mc.muttley.simpleloans.main.SimpleLoansPlugin
+author: chaoscrasher & junkdudehd
+main: com.jb1services.mc.junkdudehd.customlevels.main.CustomLevelsPlugin
 
 commands:
-  loan:
-    description: Allows you to loan to other people!
-    usage: use /loan offer <loanee> <amount> <days> <interest>, /loan accept <loanShark>, loan deny <loanShsrk>, loan list live|hosted|offered|offeredTo 
+  clevel:
+    description: Shows your custom level!
+    usage: use /clevel

@@ -1,11 +1,13 @@
-package com.jb1services.mc.muttley.simpleloans.events;
+package com.jb1services.mc.junkdudehd.customlevels.events;
+
+import java.sql.SQLException;
 
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import com.jb1services.mc.muttley.simpleloans.main.CustomLevelsPlugin;
+import com.jb1services.mc.junkdudehd.customlevels.main.CustomLevelsPlugin;
 
 public class PlayerKillRewardEvent implements Listener
 {
@@ -22,7 +24,14 @@ public class PlayerKillRewardEvent implements Listener
 		if (entity != null && entity instanceof Player)
 		{
 			Player killer = (Player) entity;
-			plugin.addXP(killer.getUniqueId(), plugin.getPlayerKillXP());
+			try
+			{
+				plugin.getDAO().addXP(killer.getUniqueId(), plugin.getPlayerKillXP());
+			} catch (SQLException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		}
 	}
 }
