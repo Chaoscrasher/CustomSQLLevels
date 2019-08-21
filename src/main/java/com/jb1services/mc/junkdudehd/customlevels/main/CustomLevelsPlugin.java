@@ -40,7 +40,7 @@ public class CustomLevelsPlugin extends JavaPlugin {
 	{
 		instance = this;
 		System.out.println("simpleloans loaded!");
-		new LevelCommand(this);
+		this.getCommand("clevel").setExecutor(new LevelCommand(this));
 		this.getServer().getPluginManager().registerEvents(new PlayerKillRewardEvent(this), this);
 		this.getServer().getPluginManager().registerEvents(new DailyRewardEvent(this), this);
 		this.getServer().getPluginManager().registerEvents(new PlayerMineReward(this), this);
@@ -58,10 +58,6 @@ public class CustomLevelsPlugin extends JavaPlugin {
 		
 	}
 	
-	public void executeSQL(String query)
-	{
-		//TODO: Implement
-	}
    
 	public String getUser()
 	{
@@ -88,12 +84,6 @@ public class CustomLevelsPlugin extends JavaPlugin {
 		return getConfig().getString("sql.database");
 	}
 	
-	public void setLastLoginRewardDate(UUID user, LocalDate time)
-	{
-    	String sqlDS = FormatUtil.jodaDateToSQLDateString(time);
-		executeSQL("UPDATE TABLE users SET last_login_reward = '"+sqlDS+"' WHERE uuid = '"+user+"';");
-	}
-
 //default value?
 	public int getDailyRewardXP()
 	{
@@ -119,7 +109,7 @@ public class CustomLevelsPlugin extends JavaPlugin {
 
 	public double getXPIncrease()
 	{
-    	return getConfig().getDouble("xpIncrease");
+    	return getConfig().getDouble("xp-increase");
 	}
 
 	public Optional<Integer> getLevel(UUID player) throws SQLException
@@ -131,13 +121,22 @@ public class CustomLevelsPlugin extends JavaPlugin {
 		    double xpIncrease = getXPIncrease();
 		    //xp at level x = l1t(20)*xpIncrease(1.5)^(x-1)
 		    int cxp = getL1Threshold();
-		    int lv = 1;
-		    while (cxp <= axp)
+		    
+		    if (cxp > 0.0)
 		    {
-		    	cxp *= xpIncrease;
-		    	lv++;
+			    int lv = 1;
+			    while (cxp <= axp)
+			    {
+			    	cxp *= xpIncrease;
+			    	lv++;
+			    }
+			    return Optional.of(lv);
 		    }
-		    return Optional.of(lv);
+		    else
+		    {
+		    	System.err.println("ERROR. xpIncrease needs to be > 0.0!");
+		    	return Optional.empty();
+		    }
 	    }
 	    return Optional.empty();
 	}

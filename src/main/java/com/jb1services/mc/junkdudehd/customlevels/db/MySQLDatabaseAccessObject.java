@@ -1,6 +1,7 @@
 package com.jb1services.mc.junkdudehd.customlevels.db;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -115,10 +116,18 @@ public class MySQLDatabaseAccessObject
 		Statement stmt;
 		try
 		{
-			stmt = con.createStatement();
-			boolean res = stmt.execute(query);
-			close();
-			return res;
+			if (con != null)
+			{
+				stmt = con.createStatement();
+				boolean res = stmt.execute(query);
+				close();
+				return res;
+			}
+			else
+			{
+				System.err.println("Couldn't execute query, due to SQL connection not being live!");
+				return false;
+			}
 		} catch (SQLException e2)
 		{
 			// TODO Auto-generated catch block
@@ -188,15 +197,18 @@ public class MySQLDatabaseAccessObject
 		if (rso.isPresent())
 		{
 			ResultSet rs = rso.get();
-			close();
 			try 
 			{
-				return Optional.of(new User(UUID.fromString(rs.getString(1)), rs.getInt(2), FormatUtil.sQLDateToLocalDate(rs.getDate(3))));
+				Optional<User> uo = Optional.of(new User(UUID.fromString(rs.getString(1)), rs.getInt(2), FormatUtil.sQLDateToLocalDate(rs.getDate(3))));
+				close();
+				return uo;
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return Optional.empty();
+				
 			}
+			close();
+			return Optional.empty();
 		}
 		else
 		{
@@ -211,7 +223,7 @@ public class MySQLDatabaseAccessObject
 		if (cxpo.isPresent())
 		{
 			int cxp = cxpo.get();
-			return execute("UPDATE TABLE users SET xp = "+(cxp+xpToAdd)+" WHERE uuid = '"+user+"';");
+			return execute("UPDATE users SET xp = "+(cxp+xpToAdd)+" WHERE uuid = '"+user+"';");
 		}
 		else
 		{
@@ -226,9 +238,17 @@ public class MySQLDatabaseAccessObject
 		if (rso.isPresent())
 		{
 			ResultSet rs = rso.get();
-			int xp = rs.getInt(1);
-			close();
-			return Optional.of(xp);
+			if (rs.next())
+			{
+				int xp = rs.getInt("xp");
+				close();
+				return Optional.of(xp);
+			}
+			else
+			{
+				System.err.println("Couldn't retrieve XP data for user "+user+" from SQL Server!");
+				return Optional.empty();
+			}
 		}
 		else
 		{
@@ -247,10 +267,15 @@ public class MySQLDatabaseAccessObject
 		if (userExists(user))
 		{
 			Optional<ResultSet> rso = query("SELECT last_login_reward FROM users WHERE uuid = '"+user+"';");
-			close();
 			if (rso.isPresent())
 			{
-				return Optional.of(FormatUtil.sQLDateToLocalDate(rso.get().getDate(1)));
+				ResultSet rs = rso.get();
+				if (rs.next())
+				{
+					Date date = rs.getDate("last_login_reward");
+					close();
+					return Optional.of(FormatUtil.sQLDateToLocalDate(date));
+				}
 			}
 		}
 		return Optional.empty();
@@ -258,12 +283,41 @@ public class MySQLDatabaseAccessObject
 	
 	public boolean userExists(UUID user)
 	{
-		return execute("SELECT * FROM USERS WHERE uuid = '"+user+"';");
+		Optional<ResultSet> rso = query("SELECT * FROM users WHERE uuid = '"+user+"';");
+		if (rso.isPresent())
+		{
+			ResultSet rs = rso.get();
+			try 
+			{
+				return rs.next();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}
+		else
+		{
+			System.err.println("Couldn't retrive user '"+user+"' from SQL Server!");
+		}
+		return false;
+	}
+	
+	public void updateLastLoginRewardDateForUser(UUID user)
+	{
+		String sqlDate = FormatUtil.jodaDateToSQLDateString(LocalDate.now());
+		execute("UPDATE users SET last_login_reward = '"+sqlDate+"' where uuid = '"+user+"';");
+	}
+	
+	public void setLastLoginRewardDate(UUID user, LocalDate time)
+	{
+    	String sqlDS = FormatUtil.jodaDateToSQLDateString(time);
+		execute("UPDATE users SET last_login_reward = '"+sqlDS+"' WHERE uuid = '"+user+"';");
 	}
 	
 	public void setUpUser(UUID user)
 	{
-		execute("INSERT INTO USERS(uuid, xp) VALUES('"+user+"', 0);");
+		execute("INSERT INTO users(uuid, xp) VALUES('"+user+"', 0);");
 	}
 
 	public void test ()
