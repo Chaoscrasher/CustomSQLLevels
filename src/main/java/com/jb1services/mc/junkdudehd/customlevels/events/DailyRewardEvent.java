@@ -39,7 +39,7 @@ public class DailyRewardEvent implements Listener
 		            try
 					{
 						plugin.getDAO().addXP(user, plugin.getDailyRewardXP());
-						plugin.setLastLoginRewardDate(user, DateTime.now().toLocalDate());
+						plugin.getDAO().updateLastLoginRewardDateForUser(user);
 					} catch (SQLException e1)
 					{
 						e1.printStackTrace();
@@ -48,10 +48,8 @@ public class DailyRewardEvent implements Listener
 		    }
 		    else
 		    {
-		        plugin.setLastLoginRewardDate(user, DateTime.now().toLocalDate());
-
-		        String sqlDate = FormatUtil.jodaDateToSQLDateString(DateTime.now().toLocalDate());
-		    	plugin.executeSQL("UPDATE TABLE users SET last_login_reward = '"+sqlDate+"' where uuid = '"+user+"';");
+		    	plugin.getDAO().setUpUser(user);
+		        plugin.getDAO().updateLastLoginRewardDateForUser(user);
 		    }
 		} catch (SQLException e2)
 		{

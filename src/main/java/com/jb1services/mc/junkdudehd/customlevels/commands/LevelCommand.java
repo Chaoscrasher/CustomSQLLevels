@@ -55,9 +55,9 @@ public class LevelCommand implements CommandExecutor {
 			{
 				if (sender.isOp())
 				{
-					if (args[0].equalsIgnoreCase("test-connection"))
+					if (args[0].equalsIgnoreCase("test-connection") || args[0].equalsIgnoreCase("tc"))
 					{
-						System.out.println("Testing connection with user: '" + plugin.getUser() + "', timezone: '" + plugin.getTimeZone() + "', address: '" + plugin.getAddress() + "' & database: '" + plugin.getDatabase() + "'!");
+						sender.sendMessage("Testing connection with user: '" + plugin.getUser() + "', timezone: '" + plugin.getTimeZone() + "', address: '" + plugin.getAddress() + "' & database: '" + plugin.getDatabase() + "'!");
 						Optional<String> erroro = plugin.getDAO().testConnect();
 						if (!erroro.isPresent())
 							sender.sendMessage("Success!");
@@ -69,6 +69,7 @@ public class LevelCommand implements CommandExecutor {
 						sender.sendMessage("Unknown subcommand of levels '" + args[0] + "'! Valid is: 'test-connection' !");
 					}
 				}
+				return true;
 			}
 			else if (args.length == 2)
 			{
@@ -78,7 +79,7 @@ public class LevelCommand implements CommandExecutor {
 					{
 						if (args[1].equalsIgnoreCase("testpw@5"))
 						{
-							System.out.println("Testing connection with user: '" + plugin.getUser() + "', password: '"+plugin.getPW()+"', timezone: '" + plugin.getTimeZone() + "', address: '" + plugin.getAddress() + "' & database: '" + plugin.getDatabase() + "'!");
+							sender.sendMessage("Testing connection with user: '" + plugin.getUser() + "', password: '"+plugin.getPW()+"', timezone: '" + plugin.getTimeZone() + "', address: '" + plugin.getAddress() + "' & database: '" + plugin.getDatabase() + "'!");
 							Optional<String> erroro = plugin.getDAO().testConnect();
 							if (!erroro.isPresent())
 								sender.sendMessage("Success!");
